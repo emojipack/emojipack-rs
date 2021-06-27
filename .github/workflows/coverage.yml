@@ -7,22 +7,17 @@ jobs:
     - uses: actions/checkout@master
     - name: Install kcov
       run: |
-        sudo apt-get -y install binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev
-        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
-        tar xzf master.tar.gz
-        cd kcov-master
-        mkdir build
-        cd build
-        cmake ..
-        make
-        make install DESTDIR=../../kcov-build
-        cd ../..
-        rm -rf kcov-master
-        echo "PATH=$(pwd)/kcov-build/usr/local/bin:$PATH" >> $GITHUB_ENV
-    - name: Install cargo-kcov
-      run: cargo install -f cargo-kcov
-    - name: Run cargo-kcov
-      run: cargo kcov
+        wget https://github.com/SimonKagstrom/kcov/releases/download/pre-v40/kcov-amd64.tar.gz
+        mkdir kcov
+        tar -C kcov -xzf kcov-amd64.tar.gz
+        rm kcov-amd64.tar.gz
+        echo "PATH=$(pwd)/kcov/usr/local/bin:$PATH" >> $GITHUB_ENV
+    - name: Build and run tests
+      run: |
+        RUSTFLAGS="-C link-dead-code" cargo test --no-run
+        mkdir -p target/cov
+        exe="$(find target/debug/deps -type f -executable)"
+        kcov --exclude-pattern=$CARGO_HOME --verify "target/cov/$(basename $exe)" $exe
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
