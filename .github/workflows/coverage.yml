@@ -21,10 +21,11 @@ jobs:
         RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
     - name: Collect test
       uses: actions-rs/grcov@v0.1
+      id: coverage
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        directory: ./target/cov
+        files: ${{ steps.coverage.outputs.report }}
         flags: unittests
         fail_ci_if_error: true
         path_to_write_report: ./coverage/codecov_report.txt
