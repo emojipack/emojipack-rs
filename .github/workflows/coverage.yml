@@ -1,0 +1,33 @@
+name: Coverage
+on: [push]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install kcov
+      run: |
+        apt-get -y install binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev
+        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
+        tar xzf master.tar.gz
+        cd kcov-master
+        mkdir build
+        cd build
+        cmake ..
+        make
+        make install DESTDIR=../../kcov-build
+        cd ../..
+        rm -rf kcov-master
+        echo "PATH=$(pwd)/kcov-build/usr/local/bin:$PATH" >> $GITHUB_ENV
+    - name: Install cargo-kcov
+      run: cargo install -f cargo-kcov
+    - name: Run cargo-kcov
+      run: cargo kcov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        directory: ./target/cov
+        flags: unittests
+        fail_ci_if_error: true
+        path_to_write_report: ./coverage/codecov_report.txt
+        verbose: true
