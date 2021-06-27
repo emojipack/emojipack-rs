@@ -7,6 +7,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Install kcov
       run: |
+        sudo apt-get -y install binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev
         wget https://github.com/SimonKagstrom/kcov/releases/download/pre-v40/kcov-amd64.tar.gz
         mkdir kcov
         tar -C kcov -xzf kcov-amd64.tar.gz
