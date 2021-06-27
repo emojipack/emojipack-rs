@@ -8,6 +8,7 @@ jobs:
     - name: Install kcov
       run: |
         sudo apt-get -y install binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev
+        sudo ldconfig
         wget https://github.com/SimonKagstrom/kcov/releases/download/pre-v40/kcov-amd64.tar.gz
         mkdir kcov
         tar -C kcov -xzf kcov-amd64.tar.gz
@@ -18,7 +19,7 @@ jobs:
         RUSTFLAGS="-C link-dead-code" cargo test --no-run
         mkdir -p target/cov
         exe="$(find target/debug/deps -type f -executable)"
-        kcov --exclude-pattern=$CARGO_HOME --verify "target/cov/$(basename $exe)" $exe
+        LD_LIBARY_PATH="$(pwd)/target/debug/deps" kcov --exclude-pattern=$CARGO_HOME --verify "target/cov/$(basename $exe)" $exe
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
