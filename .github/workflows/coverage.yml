@@ -19,7 +19,7 @@ jobs:
         RUSTFLAGS="-C link-dead-code" cargo test --no-run
         mkdir -p target/cov
         exe="$(find target/debug/deps -type f -executable)"
-        LD_LIBARY_PATH="$(pwd)/target/debug/deps" kcov --exclude-pattern=$CARGO_HOME --verify "target/cov/$(basename $exe)" $exe
+        LD_LIBARY_PATH="$(pwd)/target/debug/deps:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH" kcov --exclude-pattern=$CARGO_HOME --verify "target/cov/$(basename $exe)" $exe
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
