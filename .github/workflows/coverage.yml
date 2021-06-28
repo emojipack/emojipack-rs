@@ -23,13 +23,14 @@ jobs:
         args: --all-features --no-fail-fast
       env:
         RUSTFLAGS: "-Zinstrument-coverage"
-    - name: Collect test
-      uses: actions-rs/grcov@v0.1
-      id: coverage
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        files: ${{ steps.coverage.outputs.report }}
+        LLVM_PROFILE_FILE: "target/cov/coverage-%p-%m.profraw"
+    - name: Run grcov
+      run: |
+        wget "https://github.com/mozilla/grcov/releases/download/v0.8.0/grcov-linux-x86_64.tar.bz2"
+        tar xf grcov-linux-x86_64.tar.bz2
+        rm grcov-linux-x86_64.tar.bz2
+        ./grcov . -s . --binary-path ./target/debug -t lcov --branch --ignore-not-existing -o coverage.lcov
+    - name: Upload coveracoverage.lcov
         flags: unittests
         fail_ci_if_error: true
         path_to_write_report: ./coverage/codecov_report.txt
