@@ -30,7 +30,9 @@ jobs:
         tar xf grcov-linux-x86_64.tar.bz2
         rm grcov-linux-x86_64.tar.bz2
         ./grcov . -s . --binary-path ./target/debug -t lcov --branch --ignore-not-existing -o coverage.lcov
-    - name: Upload coveracoverage.lcov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+        file: coverage.lcov
         flags: unittests
         fail_ci_if_error: true
         path_to_write_report: ./coverage/codecov_report.txt
