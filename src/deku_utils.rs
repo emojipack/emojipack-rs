@@ -16,7 +16,9 @@ pub(crate) fn read_string(
 }
 
 pub(crate) fn write_string(output: &mut BitVec<Msb0, u8>, s: &str) -> Result<(), DekuError> {
-    (s.len() as u16).write(output, ())?;
+    use deku::ctx::Endian;
+
+    (s.len() as u16).write(output, Endian::Big)?;
     s.as_bytes().write(output, ())?;
 
     Ok(())
